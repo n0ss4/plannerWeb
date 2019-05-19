@@ -1,0 +1,20 @@
+/**
+* CSS del NAV
+**/
+
+@font-face {
+  font-family: Remachine;
+  src: url(../../../dist/font/RemachineScript.ttf);
+}
+
+.typography {
+  font-family: Remachine !important;
+}
+
+.header {
+  background-color: #0cac4d !important;
+}
+
+.MuiDrawer-paperAnchorDockedLeft-76 {
+  border-right: 1px solid rgba(0, 0, 0, 0.2) !important;
+}

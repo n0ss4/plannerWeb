@@ -1,0 +1,9 @@
+@font-face {
+  font-family: Remachine;
+  src: url(../../../dist/font/RemachineScript.ttf);
+}
+
+.typography {
+  font-family: Remachine !important;
+  color: white !important;
+}
