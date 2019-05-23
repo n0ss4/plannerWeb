@@ -1,0 +1,22 @@
+{
+  "es": {
+    "schedule": {
+      "day": "Día",
+      "week": "Semana",
+      "workWeek": "Semana de trabajo",
+      "month": "Mes",
+      "timelineWeek": "línea de tiempo de la semana",
+      "timelineDay": "línea de tiempo del día",
+      "timelineMonth": "línea de tiempo del mes",
+      "today": "hoy",
+      "more": "más",
+      "newEvent": "Nuevo Evento",
+      "editEvent": "Editar Evento",
+      "saveButton": "Guardar",
+      "cancelButton": "Cancelar"
+    },
+    "dropdowns": {
+      "noRecordsTemplate": "Este responsable no tiene técnicos asignados."
+    }
+  }
+}

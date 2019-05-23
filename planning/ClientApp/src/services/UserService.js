@@ -1,10 +1,8 @@
 export default class UserService {
   // Initializing important variables
   constructor(domain) {
-    this.fetch = this.fetch.bind(this); // React binding stuff
-    this.login = this.login.bind(this);
-    this.getProfile = this.getProfile.bind(this);
-    this.logout = this.logout.bind(this);
+    this.getUsers = this.getUsers.bind(this); // React binding stuff
+    this.getToken = this.getToken.bind(this);
   }
 
   getUsers() {
@@ -16,8 +14,8 @@ export default class UserService {
     headers["Authorization"] = "Bearer " + this.getToken();
 
     return fetch("/api/usuarios", {
-      headers,
-      ...options
+      method: "GET",
+      headers
     })
       .then(this._checkStatus)
       .then(response => response.json());

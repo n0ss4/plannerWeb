@@ -25,6 +25,7 @@ namespace planning.Models
         public virtual DbSet<Trabajadores> Trabajadores { get; set; }
         public virtual DbSet<Usuarios> Usuarios { get; set; }
         public virtual DbSet<WEB_usuarios> WEB_usuarios { get; set; }
+        public virtual DbSet<WEB_localizacion_trabajador> WEB_localizacion_trabajador { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

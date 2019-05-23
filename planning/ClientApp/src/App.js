@@ -4,7 +4,6 @@ import Nav from "./components/NavComponent/Nav";
 import "./App.css";
 import PrivateRoute from "./PrivateRoute";
 import Login from "./components/LoginComponent/Login";
-import Mapa from "./components/MapComponent/Map";
 
 function App() {
   return (

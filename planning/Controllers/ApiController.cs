@@ -8,8 +8,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using planificadorWeb.Models;
 using planning.Models;
+using planning.ViewModels;
 
 namespace planificadorWeb.Controllers
 {
@@ -191,7 +193,7 @@ namespace planificadorWeb.Controllers
         }
 
         /**
-         * GET -> Mostrar todos los trabajadores.
+         * GET -> Mostrar todos los responsables.
          * **/
 
         [HttpGet("responsable/{id}")]
@@ -201,6 +203,25 @@ namespace planificadorWeb.Controllers
             string jsonText = JsonConvert.SerializeObject(res);
             return Content(jsonText, "application/json");
         }
+
+        /**
+         * POST -> Añadir un responsable.
+         * **/
+
+        [HttpPost("responsable")]
+        public void PostBoss(int id, string nombre, string apellidos)
+        {
+            var sql = "WEB_crear_trabajadores @id, @nombre, @apellidos";
+            db.Database.ExecuteSqlCommand(
+                sql,
+                new SqlParameter("@id", id),
+                new SqlParameter("@nombre", nombre),
+                new SqlParameter("@apellidos", apellidos));
+        }
+
+        /**
+         * UPDATE -> Actualizar un responsable.
+         * **/
 
         #endregion
 
@@ -300,16 +321,16 @@ namespace planificadorWeb.Controllers
          * **/
 
         [HttpPost("incidencia")]
-        public void PostWarning(string descripcion, DateTime inicial, DateTime final, int trabajador, int cliente)
+        public void PostWarning([FromBody] WarningViewModel data)
         {
             var sql = "WEB_crear_incidencias @descripcion, @fecha_inicial, @fecha_final, @id_trabajador, @id_cliente";
             db.Database.ExecuteSqlCommand(
                 sql,
-                new SqlParameter("@descripcion", descripcion),
-                new SqlParameter("@fecha_inicial", inicial),
-                new SqlParameter("@fecha_final", final),
-                new SqlParameter("@id_trabajador", trabajador),
-                new SqlParameter("@id_cliente", cliente));
+                new SqlParameter("@descripcion", data.descripcion),
+                new SqlParameter("@fecha_inicial", data.inicial),
+                new SqlParameter("@fecha_final", data.final),
+                new SqlParameter("@id_trabajador", data.trabajador),
+                new SqlParameter("@id_cliente", data.cliente));
         }
 
         /**
@@ -334,6 +355,26 @@ namespace planificadorWeb.Controllers
                 new SqlParameter("@id_trabajador", trabajador),
                 new SqlParameter("@id_cliente", cliente),
                 new SqlParameter("@id", id));
+        }
+
+        #endregion
+
+        #region MÁS COSAS
+
+        [HttpGet("trabajador/localizacion")]
+        public ActionResult getEmployeeLocation(int Id, DateTime fecha)
+        {
+            var res = db.WEB_localizacion_trabajador.Where(x=> (x.id_trabajador == Id) && x.inicial.Day == fecha.Day && x.final.Day == fecha.Day).ToList();
+            string jsonText = JsonConvert.SerializeObject(res, new IsoDateTimeConverter() { DateTimeFormat = "yyyy-MM-dd HH:mm:ss" });
+            return Content(jsonText, "application/json");
+        }
+
+        [HttpGet("trabajadores/localizaciones")]
+        public ActionResult getViewLocalizacion()
+        {
+            var res = db.WEB_localizacion_trabajador.ToList();
+            string jsonText = JsonConvert.SerializeObject(res, new IsoDateTimeConverter() { DateTimeFormat = "yyyy-MM-dd HH:mm:ss" });
+            return Content(jsonText, "application/json");
         }
 
         #endregion

@@ -6,7 +6,6 @@ import * as serviceWorker from "./serviceWorker";
 import "@fortawesome/fontawesome-free/css/all.css";
 import "bootstrap/dist/css/bootstrap.css";
 import "jquery/dist/jquery.js";
-import Nav from "./components/NavComponent/Nav";
 
 ReactDOM.render(<App />, document.getElementById("root"));
 

@@ -29,6 +29,9 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 import Home from "../HomeComponent/Home";
 import Mapa from "../MapComponent/Map";
 import Clientes from "../ClientComponent/Client";
+import Planificador from "../PlanComponent/Plan";
+import Usuarios from "../UserComponent/User";
+import Incidencias from "../WarningComponent/Warning";
 
 const drawerWidth = 240;
 
@@ -202,9 +205,9 @@ class NavContent extends React.Component {
               </ListItemIcon>
               <ListItemText primary={"Inicio"} />
             </ListItem>
-            {(role == "Administrador" ||
-              role == "Responsable" ||
-              role == "Trabajador") && (
+            {(role === "Administrador" ||
+              role === "Responsable" ||
+              role === "Trabajador") && (
               <ListItem
                 button
                 component="a"
@@ -217,7 +220,7 @@ class NavContent extends React.Component {
                 <ListItemText primary={"Planificador"} />
               </ListItem>
             )}
-            {(role == "Cliente" || role == "Administrador") && (
+            {(role === "Cliente" || role === "Administrador") && (
               <ListItem
                 button
                 component="a"
@@ -230,9 +233,9 @@ class NavContent extends React.Component {
                 <ListItemText primary={"Incidencias"} />
               </ListItem>
             )}
-            {(role == "Trabajador" ||
-              role == "Administrador" ||
-              role == "Responsable") && (
+            {(role === "Trabajador" ||
+              role === "Administrador" ||
+              role === "Responsable") && (
               <ListItem
                 button
                 component="a"
@@ -246,8 +249,8 @@ class NavContent extends React.Component {
               </ListItem>
             )}
           </List>
-          {role == "Administrador" && <Divider />}
-          {role == "Administrador" && (
+          {role === "Administrador" && <Divider />}
+          {role === "Administrador" && (
             <List>
               <ListItem button component="a" href="/usuarios/" key={"Usuarios"}>
                 <ListItemIcon>
@@ -276,10 +279,10 @@ class NavContent extends React.Component {
           <div className={classes.toolbar} />
           <Router>
             <Route path="/inicio/" exact component={Home} />
-            {/*<Route path="/planificador/" component={Planificador} />
-            <Route path="/incidencias/" component={Incidencias} />*/}
+            <Route path="/planificador/" component={Planificador} />
+            <Route path="/incidencias/" component={Incidencias} />
             <Route path="/geolocalizador/" component={Mapa} />
-            {/*<Route path="/usuarios/" component={Usuarios} />*/}
+            <Route path="/usuarios/" component={Usuarios} />
             <Route path="/clientes/" component={Clientes} />
           </Router>
         </main>

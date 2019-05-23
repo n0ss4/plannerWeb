@@ -53,7 +53,7 @@ function Client(props) {
   return (
     <div>
       <div className={classes.div}>
-        <h2>Clientes</h2>
+        <h4>Clientes</h4>
         <Fab
           color="primary"
           aria-label="Add"
