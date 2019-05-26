@@ -7,10 +7,35 @@ import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import DateFnsUtils from "@date-io/date-fns";
 import { DateTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
-import Paper from "@material-ui/core/Paper";
+import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import Avatar from "@material-ui/core/Avatar";
+import WarningIcon from "@material-ui/icons/Warning";
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    width: "100%",
+    maxWidth: 360,
+    maxHeight: "80vh",
+    overflowY: "auto"
+  },
+  listItem: {
+    border: "1px solid #0cac4d",
+    borderRadius: "28px",
+    marginTop: "10px"
+  },
+  button: {
+    backgroundColor: "#0cac4d"
+  }
+}));
 
 function Warning(props) {
+  const classes = useStyles();
+
   // Función y variables para la descripción.
   const [descripcion, setDescripcion] = useState("");
   function descripcionChange(e) {
@@ -92,9 +117,9 @@ function Warning(props) {
       }),
       headers
     })
-      .then(res => res.json())
+      .then(res => console.log(res))
       .catch(error => console.error("Error: ", error))
-      .then(response => console.log("Success: ", response));
+      .then(response => getIncidencias());
   }
 
   const [incidencias, setIncidencias] = useState([]);
@@ -102,7 +127,17 @@ function Warning(props) {
   function getIncidencias() {
     fetch("/api/trabajadores/localizaciones", { headers })
       .then(response => response.json())
-      .then(incidencia => incidencias.push(incidencia))
+      .then(incidencia => {
+        if (
+          incidencia != null &&
+          incidencia != undefined &&
+          incidencia.length != null &&
+          incidencia.length > 0
+        ) {
+          console.log(incidencia);
+          setIncidencias([incidencia]);
+        }
+      })
       .catch(err => console.log(err.message));
   }
 
@@ -187,27 +222,48 @@ function Warning(props) {
               </Select>
             </FormControl>
 
-            <Button type="submit" fullWidth variant="contained" color="primary">
+            <Button
+              type="submit"
+              className={classes.button}
+              fullWidth
+              variant="contained"
+              color="primary"
+            >
               Enviar
             </Button>
           </form>
         </Grid>
         <Grid item xs={12} md={1} />
         <Grid item xs={12} md={4}>
-          {incidencias.length > 0 &&
-            incidencias.map(incidencia =>
-              incidencia.map(x => (
-                <Paper
-                  key={x.id}
-                  style={{ padding: "10px", marginBottom: "5px" }}
-                >
-                  <p>
-                    {x.id} - {x.nombre}
-                  </p>
-                  <p>{x.descripcion}</p>
-                </Paper>
-              ))
+          <List className={classes.root}>
+            {incidencias != [] &&
+              incidencias.map(incidencia =>
+                incidencia.map(x => (
+                  <ListItem key={x.id} className={classes.listItem}>
+                    <Grid>
+                      <ListItemText primary={x.id + " - " + x.nombre} />
+                      <ListItemText secondary={x.descripcion} />
+                      <ListItemText secondary={x.trabajador} />
+                    </Grid>
+                  </ListItem>
+                ))
+              )}
+            {incidencias[0] == undefined && (
+              <ListItem>
+                <Grid>
+                  <ListItemAvatar>
+                    <Avatar>
+                      <WarningIcon />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary="No hay incidencias..."
+                    secondary="¿A que esperas a crear tu primera incidencia?"
+                  />
+                </Grid>
+              </ListItem>
             )}
+          </List>
         </Grid>
         <Grid item xs={12} md={1} />
       </Grid>

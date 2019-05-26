@@ -292,14 +292,30 @@ namespace planificadorWeb.Controllers
 
         #region Incidencias
 
+        [HttpPost("incidencias")]
+        public ActionResult PostAllWarnings(DateTime? StartDate, DateTime? EndDate)
+        {
+            var res = db.Incidencias.ToList();
+            if (StartDate != null && EndDate != null)
+            {
+                res = db.Incidencias.Where(x => x.FechaInicial >= StartDate && x.FechaFinal <= EndDate).ToList();
+            }
+            string jsonText = JsonConvert.SerializeObject(res);
+            return Content(jsonText, "application/json");
+        }
+
         /**
          * GET -> Mostrar todas las incidencias.
          * **/
 
         [HttpGet("incidencias")]
-        public ActionResult GetAllWarnings()
+        public ActionResult GetAllWarnings(DateTime? StartDate, DateTime? EndDate)
         {
             var res = db.Incidencias.ToList();
+            if (StartDate != null && EndDate != null)
+            {
+                res = db.Incidencias.Where(x => x.FechaInicial >= StartDate && x.FechaFinal <= EndDate).ToList();
+            }
             string jsonText = JsonConvert.SerializeObject(res);
             return Content(jsonText, "application/json");
         }
@@ -376,6 +392,8 @@ namespace planificadorWeb.Controllers
             string jsonText = JsonConvert.SerializeObject(res, new IsoDateTimeConverter() { DateTimeFormat = "yyyy-MM-dd HH:mm:ss" });
             return Content(jsonText, "application/json");
         }
+
+        //public JsonResult UpdateData(EditParams )
 
         #endregion
     }

@@ -10,8 +10,16 @@ import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import Grid from "@material-ui/core/Grid";
 import ReactMapGL, { Marker, Popup } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles(theme => ({
+  button: {
+    backgroundColor: "#0cac4d"
+  }
+}));
 
 function Map(props) {
+  const classes = useStyles();
   const TOKEN =
     "pk.eyJ1Ijoibm9zc2EiLCJhIjoiY2p2dHI2NDdoM2RqMDQ4cGI5OWV3bTJndiJ9.dmRBwZAkQeF3x5ZyPp1bwg";
   const [fecha, setFecha] = useState(new Date());
@@ -26,13 +34,14 @@ function Map(props) {
 
   const [viewport, setViewport] = useState({
     width: "100%",
-    height: "60vh",
+    height: "70vh",
     latitude: 41.9735221,
     longitude: 2.1278038,
     zoom: 7
   });
 
   function viewportChange(e) {
+    console.log(e);
     setViewport(e);
   }
 
@@ -60,7 +69,7 @@ function Map(props) {
   const [dataLocation, setDataLocation] = useState(new Array());
 
   function getLocation(data) {
-    console.log(data);
+    var arrayLocation = [];
     for (let i = 0; i < data.length; i++) {
       fetch(
         "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
@@ -71,7 +80,7 @@ function Map(props) {
       )
         .then(response => response.json())
         .then(localizaciones => {
-          dataLocation.push({
+          arrayLocation.push({
             id: i,
             longitud: localizaciones.features[0].center[0],
             latitud: localizaciones.features[0].center[1],
@@ -81,6 +90,8 @@ function Map(props) {
         })
         .catch(err => console.log(err.message));
     }
+    setDataLocation(arrayLocation);
+    viewportChange(viewport);
   }
 
   const [trabajadorLocalizacion, setTrabajadorLocalizacion] = useState([]);
@@ -145,7 +156,13 @@ function Map(props) {
             </FormControl>
           </Grid>
           <Grid item md={4} xs={12}>
-            <Button type="submit" fullWidth variant="contained" color="primary">
+            <Button
+              type="submit"
+              className={classes.button}
+              fullWidth
+              variant="contained"
+              color="primary"
+            >
               Buscar
             </Button>
           </Grid>
