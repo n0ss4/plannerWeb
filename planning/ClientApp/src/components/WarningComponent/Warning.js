@@ -15,6 +15,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import WarningIcon from "@material-ui/icons/Warning";
+import es from "date-fns/locale/es";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -119,7 +120,7 @@ function Warning(props) {
     })
       .then(res => console.log(res))
       .catch(error => console.error("Error: ", error))
-      .then(response => getIncidencias());
+      .then(getIncidencias());
   }
 
   const [incidencias, setIncidencias] = useState([]);
@@ -129,12 +130,11 @@ function Warning(props) {
       .then(response => response.json())
       .then(incidencia => {
         if (
-          incidencia != null &&
-          incidencia != undefined &&
-          incidencia.length != null &&
+          incidencia !== null &&
+          incidencia !== undefined &&
+          incidencia.length !== null &&
           incidencia.length > 0
         ) {
-          console.log(incidencia);
           setIncidencias([incidencia]);
         }
       })
@@ -180,7 +180,7 @@ function Warning(props) {
               </Select>
             </FormControl>
 
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <MuiPickersUtilsProvider utils={DateFnsUtils} locale={es}>
               <DateTimePicker
                 label="Fecha Inicial"
                 value={fechaInicial}
@@ -236,7 +236,7 @@ function Warning(props) {
         <Grid item xs={12} md={1} />
         <Grid item xs={12} md={4}>
           <List className={classes.root}>
-            {incidencias != [] &&
+            {incidencias !== undefined &&
               incidencias.map(incidencia =>
                 incidencia.map(x => (
                   <ListItem key={x.id} className={classes.listItem}>
@@ -248,7 +248,7 @@ function Warning(props) {
                   </ListItem>
                 ))
               )}
-            {incidencias[0] == undefined && (
+            {incidencias[0] === undefined && (
               <ListItem>
                 <Grid>
                   <ListItemAvatar>

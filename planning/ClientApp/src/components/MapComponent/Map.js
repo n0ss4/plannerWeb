@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import FormControl from "@material-ui/core/FormControl";
-import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import Button from "@material-ui/core/Button";
 import Select from "@material-ui/core/Select";
@@ -8,9 +7,11 @@ import MenuItem from "@material-ui/core/MenuItem";
 import DateFnsUtils from "@date-io/date-fns";
 import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import Grid from "@material-ui/core/Grid";
-import ReactMapGL, { Marker, Popup } from "react-map-gl";
+import ReactMapGL, { Popup } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { makeStyles } from "@material-ui/core/styles";
+import es from "date-fns/locale/es";
+import AuthService from "../../services/AuthService";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -27,21 +28,18 @@ function Map(props) {
     setFecha(e);
   }
 
+  const Auth = new AuthService();
+  const id = Auth.getProfile().nameid;
+  const role = Auth.getProfile().role;
+
   const [trabajador, setTrabajador] = useState(0);
   function trabajadorChange(e) {
     setTrabajador(e.target.value);
   }
 
-  const [viewport, setViewport] = useState({
-    width: "100%",
-    height: "70vh",
-    latitude: 41.9735221,
-    longitude: 2.1278038,
-    zoom: 7
-  });
+  const [viewport, setViewport] = useState();
 
   function viewportChange(e) {
-    console.log(e);
     setViewport(e);
   }
 
@@ -64,9 +62,7 @@ function Map(props) {
       .catch(err => console.log(err.message));
   }
 
-  const [postal, setPostal] = useState("");
-
-  const [dataLocation, setDataLocation] = useState(new Array());
+  const [dataLocation, setDataLocation] = useState([]);
 
   function getLocation(data) {
     var arrayLocation = [];
@@ -91,10 +87,7 @@ function Map(props) {
         .catch(err => console.log(err.message));
     }
     setDataLocation(arrayLocation);
-    viewportChange(viewport);
   }
-
-  const [trabajadorLocalizacion, setTrabajadorLocalizacion] = useState([]);
 
   function getTrabajadorLocalizacion(e) {
     e.preventDefault();
@@ -115,59 +108,91 @@ function Map(props) {
 
   useEffect(() => {
     getTrabajadores();
+    if (role === "Trabajador") {
+      setViewport({
+        width: "100%",
+        height: window.innerHeight - 120,
+        latitude: 41.9735221,
+        longitude: 2.1278038,
+        zoom: 7
+      });
+      fetch(
+        "/api/trabajador/localizacion?Id=" +
+          id +
+          "&fecha=" +
+          new Date().toDateString() +
+          "",
+        {
+          headers
+        }
+      )
+        .then(response => response.json())
+        .then(data => getLocation(data))
+        .catch(err => console.log(err.message));
+    } else {
+      setViewport({
+        width: "100%",
+        height: "70vh",
+        latitude: 41.9735221,
+        longitude: 2.1278038,
+        zoom: 7
+      });
+    }
   }, []);
 
   return (
     <div>
-      <form
-        style={{ width: "100%", paddingBottom: "4vh", paddingTop: "4vh" }}
-        onSubmit={getTrabajadorLocalizacion}
-      >
-        <Grid container direction="row" justify="center" alignItems="center">
-          <Grid item md={4} xs={12}>
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-              <DatePicker
-                label="Fecha"
-                value={fecha}
-                onChange={fechaChange}
-                format="yyyy-MM-dd"
-                required
+      {role !== "Trabajador" && (
+        <form
+          style={{ width: "100%", paddingBottom: "4vh", paddingTop: "4vh" }}
+          onSubmit={getTrabajadorLocalizacion}
+        >
+          <Grid container direction="row" justify="center" alignItems="center">
+            <Grid item md={4} xs={12}>
+              <MuiPickersUtilsProvider utils={DateFnsUtils} locale={es}>
+                <DatePicker
+                  label="Fecha"
+                  value={fecha}
+                  onChange={fechaChange}
+                  format="yyyy-MM-dd"
+                  required
+                  margin="normal"
+                  style={{ margin: "0", width: "80%" }}
+                />
+              </MuiPickersUtilsProvider>
+            </Grid>
+            <Grid item md={4} xs={12}>
+              <FormControl
                 margin="normal"
+                required
                 style={{ margin: "0", width: "80%" }}
-              />
-            </MuiPickersUtilsProvider>
+              >
+                <InputLabel htmlFor="trabajador">Trabajador</InputLabel>
+                <Select value={trabajador} onChange={trabajadorChange}>
+                  <MenuItem value="0">Selecciona un trabajador...</MenuItem>
+                  {dataTrabajador.length > 0 &&
+                    dataTrabajador.map(trabajador => (
+                      <MenuItem key={trabajador.Id} value={trabajador.Id}>
+                        {trabajador.Nombre + " " + trabajador.Apellidos}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item md={4} xs={12}>
+              <Button
+                type="submit"
+                className={classes.button}
+                fullWidth
+                variant="contained"
+                color="primary"
+              >
+                Buscar
+              </Button>
+            </Grid>
           </Grid>
-          <Grid item md={4} xs={12}>
-            <FormControl
-              margin="normal"
-              required
-              style={{ margin: "0", width: "80%" }}
-            >
-              <InputLabel htmlFor="trabajador">Trabajador</InputLabel>
-              <Select value={trabajador} onChange={trabajadorChange}>
-                <MenuItem value="0">Selecciona un trabajador...</MenuItem>
-                {dataTrabajador.length > 0 &&
-                  dataTrabajador.map(trabajador => (
-                    <MenuItem key={trabajador.Id} value={trabajador.Id}>
-                      {trabajador.Nombre + " " + trabajador.Apellidos}
-                    </MenuItem>
-                  ))}
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item md={4} xs={12}>
-            <Button
-              type="submit"
-              className={classes.button}
-              fullWidth
-              variant="contained"
-              color="primary"
-            >
-              Buscar
-            </Button>
-          </Grid>
-        </Grid>
-      </form>
+        </form>
+      )}
       <ReactMapGL
         mapboxApiAccessToken={TOKEN}
         {...viewport}

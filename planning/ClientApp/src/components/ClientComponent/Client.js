@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
@@ -33,22 +33,32 @@ const styles = theme => ({
   }
 });
 
-let id = 0;
-function createData(name, calories, fat, carbs, protein) {
-  id += 1;
-  return { id, name, calories, fat, carbs, protein };
-}
-
-const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Eclair", 262, 16.0, 24, 6.0),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Gingerbread", 356, 16.0, 49, 3.9)
-];
-
 function Client(props) {
   const { classes } = props;
+
+  const [clientes, setClientes] = useState([]);
+
+  const headers = {
+    Accept: "application/json",
+    "Content-Type": "application/json"
+  };
+
+  // Muy importante este encabezado ya que es el TOKEN que nos dejara recuperar los datos.
+  headers["Authorization"] = "Bearer " + localStorage.getItem("id_token");
+
+  function getClientes() {
+    fetch("/api/clientes", {
+      headers
+    })
+      .then(response => response.json())
+      .then(clientes => setClientes(clientes))
+      .catch(err => console.log(err.message));
+  }
+
+  // Función para ejecutar los GET's.
+  useEffect(() => {
+    getClientes();
+  }, []);
 
   return (
     <div>
@@ -66,29 +76,30 @@ function Client(props) {
         <Table className={classes.table}>
           <TableHead>
             <TableRow>
-              <TableCell>Dessert (100g serving)</TableCell>
-              <TableCell align="right">Calories</TableCell>
-              <TableCell align="right">Fat (g)</TableCell>
-              <TableCell align="right">Carbs (g)</TableCell>
-              <TableCell align="right">Protein (g)</TableCell>
+              <TableCell>Id</TableCell>
+              <TableCell align="right">Nombre</TableCell>
+              <TableCell align="right">Código</TableCell>
               <TableCell align="right">Editar</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map(row => (
-              <TableRow key={row.id}>
+            {clientes.map(cliente => (
+              <TableRow key={cliente.id}>
                 <TableCell component="th" scope="row">
-                  {row.name}
+                  {cliente.Id}
                 </TableCell>
-                <TableCell align="right">{row.calories}</TableCell>
-                <TableCell align="right">{row.fat}</TableCell>
-                <TableCell align="right">{row.carbs}</TableCell>
-                <TableCell align="right">{row.protein}</TableCell>
+                <TableCell align="right">{cliente.Nombre}</TableCell>
+                <TableCell align="right">{cliente.CodigoPostal}</TableCell>
                 <TableCell align="right">
                   <EditIcon />
                 </TableCell>
               </TableRow>
             ))}
+            {clientes[0] === undefined && (
+              <p style={{ padding: "10px", width: "100%" }}>
+                No hay información...
+              </p>
+            )}
           </TableBody>
         </Table>
       </Paper>

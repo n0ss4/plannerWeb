@@ -393,6 +393,14 @@ namespace planificadorWeb.Controllers
             return Content(jsonText, "application/json");
         }
 
+        [HttpGet("vista/usuarios")]
+        public ActionResult getViewUsers()
+        {
+            var res = db.WEB_usuarios.ToList();
+            string jsonText = JsonConvert.SerializeObject(res, new IsoDateTimeConverter() { DateTimeFormat = "yyyy-MM-dd HH:mm:ss" });
+            return Content(jsonText, "application/json");
+        }
+
         //public JsonResult UpdateData(EditParams )
 
         #endregion

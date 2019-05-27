@@ -120,11 +120,13 @@ class LoginContent extends React.Component {
     e.preventDefault();
     this.Auth.login(this.state.username, this.state.password)
       .then(res => {
-        this.props.history.push("/inicio");
+        if (this.Auth.getProfile().role === "Trabajador") {
+          this.props.history.push("/planificador");
+        } else {
+          this.props.history.push("/inicio");
+        }
       })
-      .catch(err => {
-        console.log(err);
-      });
+      .catch(err => {});
   }
 }
 

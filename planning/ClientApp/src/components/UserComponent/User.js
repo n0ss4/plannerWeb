@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
@@ -34,22 +34,32 @@ const styles = theme => ({
   }
 });
 
-let id = 0;
-function createData(name, calories, fat, carbs, protein) {
-  id += 1;
-  return { id, name, calories, fat, carbs, protein };
-}
-
-const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Eclair", 262, 16.0, 24, 6.0),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Gingerbread", 356, 16.0, 49, 3.9)
-];
-
 function User(props) {
   const { classes } = props;
+
+  const [users, setUsers] = useState([]);
+
+  const headers = {
+    Accept: "application/json",
+    "Content-Type": "application/json"
+  };
+
+  // Muy importante este encabezado ya que es el TOKEN que nos dejara recuperar los datos.
+  headers["Authorization"] = "Bearer " + localStorage.getItem("id_token");
+
+  function getUsuarios() {
+    fetch("/api/vista/usuarios", {
+      headers
+    })
+      .then(response => response.json())
+      .then(usuarios => setUsers(usuarios))
+      .catch(err => console.log(err.message));
+  }
+
+  // Función para ejecutar los GET's.
+  useEffect(() => {
+    getUsuarios();
+  }, []);
 
   return (
     <div>
@@ -74,18 +84,23 @@ function User(props) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map(row => (
-              <TableRow key={row.id}>
+            {users.map(user => (
+              <TableRow key={user.Id}>
                 <TableCell component="th" scope="row">
-                  {row.name}
+                  {user.Id}
                 </TableCell>
-                <TableCell align="right">{row.calories}</TableCell>
-                <TableCell align="right">{row.fat}</TableCell>
+                <TableCell align="right">{user.Nombre}</TableCell>
+                <TableCell align="right">{user.Rango}</TableCell>
                 <TableCell align="right">
                   <EditIcon />
                 </TableCell>
               </TableRow>
             ))}
+            {users[0] === undefined && (
+              <p style={{ padding: "10px", width: "100%" }}>
+                No hay información...
+              </p>
+            )}
           </TableBody>
         </Table>
       </Paper>

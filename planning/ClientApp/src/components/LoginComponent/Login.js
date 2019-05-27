@@ -15,10 +15,13 @@ class Login extends React.Component {
   }
 
   // Cuándo ya estas logeado.
-
   componentWillMount() {
     if (this.Auth.loggedIn()) {
-      this.props.history.push("/inicio");
+      if (this.Auth.getProfile().role === "Trabajador") {
+        this.props.history.push("/planificador");
+      } else {
+        this.props.history.push("/inicio");
+      }
     }
   }
 }

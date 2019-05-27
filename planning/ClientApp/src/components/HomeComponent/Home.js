@@ -1,64 +1,82 @@
 import React from "react";
-import AuthService from "../../services/AuthService";
-import UserService from "../../services/UserService";
+import { makeStyles } from "@material-ui/core/styles";
+import Paper from "@material-ui/core/Paper";
+import Typography from "@material-ui/core/Typography";
+import Grid from "@material-ui/core/Grid";
+import PeopleIcon from "@material-ui/icons/People";
+import BusinessIcon from "@material-ui/icons/BusinessCenter";
+import BuildIcon from "@material-ui/icons/Build";
 
-class Home extends React.Component {
-  constructor(props) {
-    super(props);
-    this.Auth = new AuthService();
-    this.User = new UserService();
-    this.state = {
-      usuarios: [],
-      isLoaded: false,
-      error: null
-    };
+const useStyles = makeStyles(theme => ({
+  root: {
+    padding: theme.spacing(3, 2),
+    margin: theme.spacing(3),
+    backgroundColor: "#0cac4d",
+    color: "white"
+  },
+  trabajadores: {},
+  icon: {
+    fontSize: "2em",
+    marginRight: "10px"
+  },
+  iconContainer: {
+    display: "flex",
+    alignItems: "center"
+  },
+  slave: {
+    padding: theme.spacing(1, 2),
+    marginLeft: "auto"
   }
+}));
 
-  componentDidMount() {
-    const headers = {
-      Accept: "application/json",
-      "Content-Type": "application/json"
-    };
+function Home() {
+  const classes = useStyles();
 
-    headers["Authorization"] = "Bearer " + this.Auth.getToken();
-
-    fetch("/api/usuarios", { headers })
-      .then(res => res.json())
-      .then(
-        result => {
-          this.setState({
-            isLoaded: true,
-            usuarios: result
-          });
-        },
-        error => {
-          this.setState({
-            isLoaded: true,
-            error
-          });
-        }
-      );
-  }
-
-  // Home o perfil del usuari
-  render() {
-    const { error, isLoaded, usuarios } = this.state;
-    if (error) {
-      return <div>Error: {error.message}</div>;
-    } else if (!isLoaded) {
-      return <div>Loading...</div>;
-    } else {
-      return (
-        <ul>
-          {usuarios.map(item => (
-            <li key={item.Usuario}>
-              {item.Usuario} {item.Rango}
-            </li>
-          ))}
-        </ul>
-      );
-    }
-  }
+  return (
+    <div>
+      <Grid container>
+        <Grid item xs={12} md={4}>
+          <Paper className={classes.root}>
+            <Typography
+              variant="h5"
+              component="h3"
+              className={classes.iconContainer}
+            >
+              <PeopleIcon className={classes.icon} />
+              Usuarios
+              <Paper className={classes.slave}>10</Paper>
+            </Typography>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <Paper className={classes.root}>
+            <Typography
+              variant="h5"
+              component="h3"
+              className={classes.iconContainer}
+            >
+              <BusinessIcon className={classes.icon} />
+              Clientes
+              <Paper className={classes.slave}>10</Paper>
+            </Typography>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <Paper className={`${classes.root} ${classes.trabajadores}`}>
+            <Typography
+              variant="h5"
+              component="h3"
+              className={classes.iconContainer}
+            >
+              <BuildIcon className={classes.icon} />
+              Trabajadores
+              <Paper className={classes.slave}>10</Paper>
+            </Typography>
+          </Paper>
+        </Grid>
+      </Grid>
+    </div>
+  );
 }
 
 export default Home;

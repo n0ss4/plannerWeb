@@ -1,11 +1,8 @@
-import { render } from "react-dom";
 import * as React from "react";
 import {
   WorkWeek,
   Month,
   ScheduleComponent,
-  ViewsDirective,
-  ViewDirective,
   ResourcesDirective,
   ResourceDirective,
   Inject,
@@ -13,22 +10,12 @@ import {
   Resize,
   Day,
   Week,
-  Agenda,
-  RecurrenceEditorComponent
+  Agenda
 } from "@syncfusion/ej2-react-schedule";
-import { addClass } from "@syncfusion/ej2-base";
-import { extend } from "@syncfusion/ej2-base";
-import { Ajax, L10n, loadCldr } from "@syncfusion/ej2-base";
-import * as dataSource from "./datasource.json";
-import * as numberingSystems from "cldr-data/supplemental/numberingSystems.json";
-import * as gregorian from "cldr-data/main/es/ca-gregorian.json";
-import * as numbers from "cldr-data/main/es/numbers.json";
-import * as timeZoneNames from "cldr-data/main/es/timeZoneNames.json";
 import { DataManager, WebApiAdaptor, UrlAdaptor } from "@syncfusion/ej2-data";
 import { DateTimePickerComponent } from "@syncfusion/ej2-react-calendars";
-import { DropDownListComponent } from "@syncfusion/ej2-react-dropdowns";
+import AuthService from "../../services/AuthService";
 
-loadCldr(numberingSystems, gregorian, numbers, timeZoneNames);
 /**
  * schedule resources group-custom-work-days sample
  */
@@ -36,12 +23,12 @@ loadCldr(numberingSystems, gregorian, numbers, timeZoneNames);
 export class Plan extends React.Component {
   constructor() {
     super(...arguments);
-    this.data = extend([], dataSource.doctorData, null, true);
     this.state = {
       FechaFinal: new Date(),
       FechaInicial: new Date(),
       Descripcion: ""
     };
+    this.Auth = new AuthService();
     this.dataManger = new DataManager({
       url: "/api/incidencias",
       crudUrl: "/api/crud",
@@ -51,18 +38,29 @@ export class Plan extends React.Component {
       ],
       crossDomain: true
     });
-    this.resourceData = new DataManager({
-      url: "/api/trabajadores",
-      adaptor: new WebApiAdaptor(),
-      headers: [
-        { Authorization: "Bearer " + localStorage.getItem("id_token") }
-      ],
-      crossDomain: true
-    });
+    this.resourceData = null;
+    if (this.Auth.getProfile().role === "Trabajador") {
+      this.resourceData = new DataManager({
+        url: "/api/trabajador/" + this.Auth.getProfile().nameid + "",
+        adaptor: new WebApiAdaptor(),
+        headers: [
+          { Authorization: "Bearer " + localStorage.getItem("id_token") }
+        ],
+        crossDomain: true
+      });
+    } else {
+      this.resourceData = new DataManager({
+        url: "/api/trabajadores",
+        adaptor: new WebApiAdaptor(),
+        headers: [
+          { Authorization: "Bearer " + localStorage.getItem("id_token") }
+        ],
+        crossDomain: true
+      });
+    }
   }
 
   getTrabajadorNombre(value) {
-    console.log(value);
     return value.resourceData
       ? value.resourceData[value.resource.textField]
       : value.resourceName;
@@ -123,22 +121,22 @@ export class Plan extends React.Component {
 
       let fechaInicial = args.element.querySelector("#FechaInicial");
       fechaInicial.value =
-        args.data.FechaInicial.toLocaleDateString("en-US") +
+        args.data.FechaInicial.toLocaleDateString("es-ES") +
         " " +
-        args.data.FechaInicial.toLocaleTimeString("en-US", {
+        args.data.FechaInicial.toLocaleTimeString("es-ES", {
           hour: "2-digit",
           minute: "2-digit"
         });
       let fechaFinal = args.element.querySelector("#FechaFinal");
       fechaFinal.value =
-        args.data.FechaFinal.toLocaleDateString("en-US") +
+        args.data.FechaFinal.toLocaleDateString("es-ES") +
         " " +
-        args.data.FechaFinal.toLocaleTimeString("en-US", {
+        args.data.FechaFinal.toLocaleTimeString("es-ES", {
           hour: "2-digit",
           minute: "2-digit"
         });
       let descripcion = args.element.querySelector("#Descripcion");
-      if (args.data.Descripcion != undefined) {
+      if (args.data.Descripcion !== undefined) {
         descripcion.value = args.data.Descripcion;
       }
     }
@@ -194,12 +192,12 @@ export class Plan extends React.Component {
   }
 
   onActionBegin(args) {
-    if (args.requestType == "eventChange") {
+    if (args.requestType === "eventChange") {
       args.data.FechaInicial = args.data.StartTime;
       args.data.Descripcion = args.data.Subject;
       args.data.FechaFinal = args.data.EndTime;
     }
-    if (args.requestType == "eventCreate") {
+    if (args.requestType === "eventCreate") {
       args.data[0].FechaInicial = args.data[0].StartTime;
       args.data[0].Descripcion = args.data[0].Subject;
       args.data[0].FechaFinal = args.data[0].EndTime;
@@ -221,12 +219,6 @@ export class Plan extends React.Component {
   }
 
   onEventRendered(args) {
-    console.log(args);
-    /*var categoryColor = args.data.Color;
-    if (!args.element || !categoryColor) {
-      return;
-    }*/
-
     if (args.data.Estado) {
       args.element.style.backgroundColor = "#026329";
     } else {
@@ -235,6 +227,10 @@ export class Plan extends React.Component {
   }
 
   render() {
+    var variable = false;
+    if (this.Auth.getProfile().role === "Trabajador") {
+      variable = true;
+    }
     return (
       <div className="schedule-control-section">
         <div className="control-section">
@@ -261,6 +257,7 @@ export class Plan extends React.Component {
               resourceHeaderTemplate={this.resourceHeaderTemplate.bind(this)}
               //renderCell={this.onRenderCell.bind(this)}
               group={{ resources: ["Trabajadores"] }}
+              readonly={variable}
             >
               <ResourcesDirective>
                 <ResourceDirective

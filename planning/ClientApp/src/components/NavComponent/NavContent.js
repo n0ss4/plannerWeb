@@ -1,4 +1,6 @@
-﻿import Drawer from "@material-ui/core/Drawer";
+﻿// NavBar utilizado para todos los componentes.
+
+import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import List from "@material-ui/core/List";
@@ -33,6 +35,7 @@ import Planificador from "../PlanComponent/Plan";
 import Usuarios from "../UserComponent/User";
 import Incidencias from "../WarningComponent/Warning";
 
+// Diferentes estilos de diseño para el NavBar.
 const drawerWidth = 240;
 
 const styles = theme => ({
@@ -56,7 +59,7 @@ const styles = theme => ({
     })
   },
   chip: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing(),
     marginLeft: "auto",
     marginRight: "15px",
     borderColor: "white",
@@ -88,9 +91,9 @@ const styles = theme => ({
       duration: theme.transitions.duration.leavingScreen
     }),
     overflowX: "hidden",
-    width: theme.spacing.unit * 7 + 1,
+    width: theme.spacing(7) + 1,
     [theme.breakpoints.up("sm")]: {
-      width: theme.spacing.unit * 9 + 1
+      width: theme.spacing(9) + 1
     }
   },
   toolbar: {
@@ -102,13 +105,14 @@ const styles = theme => ({
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing.unit * 3
+    padding: theme.spacing(3)
   },
   salir: {
     marginTop: "auto"
   }
 });
 
+// La classe del NavBar dónde llamamos y creamos todas las funciones.
 class NavContent extends React.Component {
   constructor(props) {
     super(props);
@@ -117,10 +121,12 @@ class NavContent extends React.Component {
     this.Auth = new AuthService();
   }
 
+  // Creando un state para saber si el NavBar esta abierto o cerrado.
   state = {
     open: false
   };
 
+  // Diferentes funciones que cambien el estado del state open para abrirlo o cerrarlo.
   handleDrawerOpen = () => {
     this.setState({ open: true });
   };
@@ -141,10 +147,11 @@ class NavContent extends React.Component {
     this.props.history.push("/");
   }
 
-  // NavBar
+  // NavBar todos sus estilos, etiquetas, variables, etc.
   render() {
     const { classes, theme } = this.props;
     const role = this.Auth.getProfile().role;
+    const usuario = this.Auth.getProfile().unique_name;
     return (
       <div className={classes.root}>
         <CssBaseline />
@@ -166,6 +173,12 @@ class NavContent extends React.Component {
               <MenuIcon />
             </IconButton>
             <h1 className="typography">Plan X</h1>
+            <Chip
+              label={usuario}
+              className={classes.chip}
+              justify="flex-end"
+              variant="outlined"
+            />
             <Chip
               label={role}
               className={classes.chip}
@@ -199,12 +212,14 @@ class NavContent extends React.Component {
           </div>
           <Divider />
           <List>
-            <ListItem button component="a" href="/inicio/" key={"Inicio"}>
-              <ListItemIcon>
-                <HomeIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Inicio"} />
-            </ListItem>
+            {role === "Administrador" && (
+              <ListItem button component="a" href="/inicio/" key={"Inicio"}>
+                <ListItemIcon>
+                  <HomeIcon />
+                </ListItemIcon>
+                <ListItemText primary={"Inicio"} />
+              </ListItem>
+            )}
             {(role === "Administrador" ||
               role === "Responsable" ||
               role === "Trabajador") && (
