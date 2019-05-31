@@ -235,7 +235,7 @@ class NavContent extends React.Component {
                 <ListItemText primary={"Planificador"} />
               </ListItem>
             )}
-            {(role === "Cliente" || role === "Administrador") && (
+            {(role === "Responsable" || role === "Administrador") && (
               <ListItem
                 button
                 component="a"

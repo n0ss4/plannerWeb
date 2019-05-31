@@ -19,7 +19,10 @@ class Login extends React.Component {
   // Si ya estas logeado, dependiendo del rango que tienes iras a un sitio o otro.
   componentWillMount() {
     if (this.Auth.loggedIn()) {
-      if (this.Auth.getProfile().role === "Trabajador") {
+      if (
+        this.Auth.getProfile().role === "Trabajador" ||
+        this.Auth.getProfile().role === "Responsable"
+      ) {
         this.props.history.push("/planificador");
       } else {
         this.props.history.push("/inicio");
