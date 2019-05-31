@@ -343,8 +343,8 @@ namespace planificadorWeb.Controllers
             db.Database.ExecuteSqlCommand(
                 sql,
                 new SqlParameter("@descripcion", data.descripcion),
-                new SqlParameter("@fecha_inicial", data.inicial),
-                new SqlParameter("@fecha_final", data.final),
+                new SqlParameter("@fecha_inicial", data.inicial.AddHours(2)),
+                new SqlParameter("@fecha_final", data.final.AddHours(2)),
                 new SqlParameter("@id_trabajador", data.trabajador),
                 new SqlParameter("@id_cliente", data.cliente));
         }

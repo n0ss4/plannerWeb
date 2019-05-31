@@ -28,9 +28,21 @@ export class Plan extends React.Component {
     this.state = {
       FechaFinal: new Date(),
       FechaInicial: new Date(),
-      Descripcion: ""
+      Descripcion: "",
+      estado: null,
+      trabajador: null,
+      client: null
     };
+    this.fields = { text: "Nombre", value: "Id" };
     this.Auth = new AuthService();
+    this.dataClients = new DataManager({
+      url: "/api/clientes",
+      adaptor: new WebApiAdaptor(),
+      headers: [
+        { Authorization: "Bearer " + localStorage.getItem("id_token") }
+      ],
+      crossDomain: true
+    });
     this.dataManger = new DataManager({
       url: "/api/incidencias",
       crudUrl: "/api/crud",
@@ -61,7 +73,6 @@ export class Plan extends React.Component {
       });
     }
   }
-
   getTrabajadorNombre(value) {
     return value.resourceData
       ? value.resourceData[value.resource.textField]
@@ -120,20 +131,22 @@ export class Plan extends React.Component {
       args.data.FechaInicial = args.data.StartTime;
       args.data.Descripcion = args.data.Subject;
       args.data.FechaFinal = args.data.EndTime;
+      this.state.trabajador = args.data.IdTrabajador;
+      this.state.client = args.data.IdCliente;
 
       let fechaInicial = args.element.querySelector("#FechaInicial");
       fechaInicial.value =
-        args.data.FechaInicial.toLocaleDateString("es-ES") +
+        args.data.FechaInicial.toLocaleDateString("en-US") +
         " " +
-        args.data.FechaInicial.toLocaleTimeString("es-ES", {
+        args.data.FechaInicial.toLocaleTimeString("en-US", {
           hour: "2-digit",
           minute: "2-digit"
         });
       let fechaFinal = args.element.querySelector("#FechaFinal");
       fechaFinal.value =
-        args.data.FechaFinal.toLocaleDateString("es-ES") +
+        args.data.FechaFinal.toLocaleDateString("en-US") +
         " " +
-        args.data.FechaFinal.toLocaleTimeString("es-ES", {
+        args.data.FechaFinal.toLocaleTimeString("en-US", {
           hour: "2-digit",
           minute: "2-digit"
         });
@@ -189,32 +202,64 @@ export class Plan extends React.Component {
             </td>
           </tr>
           <tr>
-            <td className="e-textlabel">Cliente</td>
+            <td className="e-textlabel">Trabajador</td>
             <td style={{ colspan: 4 }}>
-              <DropDownListComponent id="clientes" />
+              <DropDownListComponent
+                id="IdTrabajador"
+                className="e-field e-IdTrabajador e-input"
+                name="IdTrabajador"
+                placeholder="Selecciona un trabajador"
+                dataSource={this.resourceData}
+                ref={dropdownlist => {
+                  this.listObj = dropdownlist;
+                }}
+                fields={this.fields}
+                value={this.state.trabajador}
+              />
             </td>
           </tr>
           <tr>
-            <td className="e-textlabel">Estado</td>
+            <td className="e-textlabel">Cliente</td>
             <td style={{ colspan: 4 }}>
-              <DropDownListComponent id="estado" />
+              <DropDownListComponent
+                id="IdCliente"
+                className="e-field e-input"
+                name="IdCliente"
+                placeholder="Selecciona un cliente"
+                dataSource={this.dataClients}
+                ref={dropdownlist => {
+                  this.listObj = dropdownlist;
+                }}
+                fields={this.fields}
+                value={this.state.client}
+              />
             </td>
           </tr>
+          {/*<tr>
+            <td className="e-textlabel">Estado</td>
+            <td style={{ colspan: 4 }}>
+              <DropDownListComponent
+                id="estado"
+                placeholder="Selecciona un estado"
+              />
+            </td>
+          </tr>*/}
         </tbody>
       </table>
     );
   }
 
   onActionBegin(args) {
+    console.log(args);
     if (args.requestType === "eventChange") {
-      args.data.FechaInicial = args.data.StartTime;
+      /*args.data.FechaInicial = args.data.StartTime;
       args.data.Descripcion = args.data.Subject;
-      args.data.FechaFinal = args.data.EndTime;
+      args.data.FechaFinal = args.data.EndTime;*/
     }
     if (args.requestType === "eventCreate") {
-      args.data[0].FechaInicial = args.data[0].StartTime;
+      /*args.data[0].FechaInicial = args.data[0].StartTime;
       args.data[0].Descripcion = args.data[0].Subject;
-      args.data[0].FechaFinal = args.data[0].EndTime;
+      args.data[0].FechaFinal = args.data[0].EndTime;*/
     }
   }
 
@@ -252,7 +297,7 @@ export class Plan extends React.Component {
             <ScheduleComponent
               ref={schedule => (this.scheduleObj = schedule)}
               cssClass="custom-work-days"
-              currentView="WorkWeek"
+              currentView="Day"
               width="100%"
               height={this.heightAuto() + "px"}
               selectedDate={new Date()}
@@ -263,7 +308,7 @@ export class Plan extends React.Component {
               popupOpen={this.onPopupOpen.bind(this)}
               readonly={false}
               editorTemplate={this.editorTemplate.bind(this)}
-              showQuickInfo={true}
+              showQuickInfo={false}
               dragStart={this.onDragStart.bind(this)}
               actionBegin={this.onActionBegin.bind(this)}
               change={this.change.bind(this)}
