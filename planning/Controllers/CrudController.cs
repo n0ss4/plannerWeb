@@ -20,6 +20,8 @@ namespace planning.Controllers
             db = planificadorContext;
         }
 
+        // CRUD: Metodo para poder eliminar, editar, subir nuevos eventos en el calendario.
+
         [HttpPost("crud")]
         public ActionResult UpdateData(EditParams param)
         {

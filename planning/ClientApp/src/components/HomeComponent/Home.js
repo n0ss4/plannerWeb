@@ -7,6 +7,8 @@ import PeopleIcon from "@material-ui/icons/People";
 import BusinessIcon from "@material-ui/icons/BusinessCenter";
 import BuildIcon from "@material-ui/icons/Build";
 
+// ESTILOS del HOME
+
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(3, 2),

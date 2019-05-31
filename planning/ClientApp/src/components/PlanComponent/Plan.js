@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState, useEffect } from "react";
 import {
   WorkWeek,
   Month,
@@ -15,9 +16,10 @@ import {
 import { DataManager, WebApiAdaptor, UrlAdaptor } from "@syncfusion/ej2-data";
 import { DateTimePickerComponent } from "@syncfusion/ej2-react-calendars";
 import AuthService from "../../services/AuthService";
+import { DropDownListComponent } from "@syncfusion/ej2-react-dropdowns";
 
 /**
- * schedule resources group-custom-work-days sample
+ * Syncfusion EJ2: REACT
  */
 
 export class Plan extends React.Component {
@@ -184,6 +186,18 @@ export class Plan extends React.Component {
                   resize: "vertical"
                 }}
               />
+            </td>
+          </tr>
+          <tr>
+            <td className="e-textlabel">Cliente</td>
+            <td style={{ colspan: 4 }}>
+              <DropDownListComponent id="clientes" />
+            </td>
+          </tr>
+          <tr>
+            <td className="e-textlabel">Estado</td>
+            <td style={{ colspan: 4 }}>
+              <DropDownListComponent id="estado" />
             </td>
           </tr>
         </tbody>

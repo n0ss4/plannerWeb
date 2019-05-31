@@ -27,6 +27,8 @@ namespace planificadorWeb.Services
         {
             db = planificadorContext;
         }
+
+        // Metodo para comprovar si el usuari i la contraseña son correctos.
         public WEB_usuarios Login(string username, string password)
         {
 

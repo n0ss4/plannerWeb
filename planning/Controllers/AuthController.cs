@@ -31,6 +31,7 @@ namespace planificadorWeb.Controllers
 
         }
 
+        // POST: Metodo que devuelve el TOKEN.
         [AllowAnonymous]
         [Produces("application/json")]
         [HttpPost("acceder")]

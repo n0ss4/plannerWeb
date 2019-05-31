@@ -13,16 +13,28 @@ import { makeStyles } from "@material-ui/core/styles";
 import es from "date-fns/locale/es";
 import AuthService from "../../services/AuthService";
 
+/**
+ * MAPA
+ */
+
+/**
+ * Estilos
+ */
+
 const useStyles = makeStyles(theme => ({
   button: {
     backgroundColor: "#0cac4d"
   }
 }));
 
+/**
+ * Función Mapa
+ */
+
 function Map(props) {
   const classes = useStyles();
   const TOKEN =
-    "pk.eyJ1Ijoibm9zc2EiLCJhIjoiY2p2dHI2NDdoM2RqMDQ4cGI5OWV3bTJndiJ9.dmRBwZAkQeF3x5ZyPp1bwg";
+    "pk.eyJ1Ijoibm9zc2EiLCJhIjoiY2p2dHI2NDdoM2RqMDQ4cGI5OWV3bTJndiJ9.dmRBwZAkQeF3x5ZyPp1bwg"; // <-- Token MAPBOX.
   const [fecha, setFecha] = useState(new Date());
   function fechaChange(e) {
     setFecha(e);
@@ -64,6 +76,7 @@ function Map(props) {
 
   const [dataLocation, setDataLocation] = useState([]);
 
+  // GET: Recoger todas las localizaciones por código POSTAL. (latitud, longitud)
   function getLocation(data) {
     var arrayLocation = [];
     for (let i = 0; i < data.length; i++) {
@@ -71,7 +84,8 @@ function Map(props) {
         "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
           data[i].codigo +
           ".json" +
-          "?access_token=pk.eyJ1Ijoibm9zc2EiLCJhIjoiY2p2dHI2NDdoM2RqMDQ4cGI5OWV3bTJndiJ9.dmRBwZAkQeF3x5ZyPp1bwg" +
+          "?access_token=" +
+          TOKEN +
           "&country=es"
       )
         .then(response => response.json())
@@ -89,6 +103,7 @@ function Map(props) {
     setDataLocation(arrayLocation);
   }
 
+  // GET: Mirando las códigos postales de las incidencias de cada trabajador.
   function getTrabajadorLocalizacion(e) {
     e.preventDefault();
     fetch(
@@ -106,6 +121,9 @@ function Map(props) {
       .catch(err => console.log(err.message));
   }
 
+  /**
+   *  HOOK: La primera vez que se ejecuta la aplicación también se ejecuta está función.
+   * */
   useEffect(() => {
     getTrabajadores();
     if (role === "Trabajador") {
@@ -140,6 +158,9 @@ function Map(props) {
     }
   }, []);
 
+  /**
+   * Impresión del Mapa.
+   */
   return (
     <div>
       {role !== "Trabajador" && (

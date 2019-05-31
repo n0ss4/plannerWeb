@@ -13,6 +13,8 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import AuthService from "../../services/AuthService";
 import "./css/style.css";
 
+// Diferentes estilos que usa el LOGIN.
+
 const styles = theme => ({
   main: {
     width: "auto",
@@ -55,6 +57,7 @@ class LoginContent extends React.Component {
     this.Auth = new AuthService();
   }
 
+  // El render dónde ejecutara el HTML por pantalla.
   render() {
     const { classes } = this.props;
     return (
@@ -108,14 +111,14 @@ class LoginContent extends React.Component {
     );
   }
 
+  // Un metodo que va leyendo lo que se escribe y se guarda en su estado.
   handleChange(e) {
     this.setState({
       [e.target.name]: e.target.value
     });
   }
 
-  // Cuándo te logeas.
-
+  // Cuándo le das al botón de acceder.
   handleFormSubmit(e) {
     e.preventDefault();
     this.Auth.login(this.state.username, this.state.password)
