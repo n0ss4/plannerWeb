@@ -250,16 +250,20 @@ export class Plan extends React.Component {
   }
 
   onActionBegin(args) {
-    console.log(args);
     if (args.requestType === "eventChange") {
-      /*args.data.FechaInicial = args.data.StartTime;
+      console.log(args);
       args.data.Descripcion = args.data.Subject;
-      args.data.FechaFinal = args.data.EndTime;*/
-    }
-    if (args.requestType === "eventCreate") {
-      /*args.data[0].FechaInicial = args.data[0].StartTime;
-      args.data[0].Descripcion = args.data[0].Subject;
-      args.data[0].FechaFinal = args.data[0].EndTime;*/
+      if(args.data.EndTimezone === undefined){
+        args.data.FechaInicial = args.data.StartTime;
+        args.data.FechaFinal = args.data.EndTime;
+      }
+      /*if (args.data.StartTime !== undefined) {
+        args.data.FechaInicial = args.data.StartTime;
+        args.data.FechaFinal = args.data.EndTime;
+      }*/
+      /*
+      
+      */
     }
   }
 

@@ -265,7 +265,7 @@ class NavContent extends React.Component {
             )}
           </List>
           {role === "Administrador" && <Divider />}
-          {role === "Administrador" && (
+          {/*role === "Administrador" && (
             <List>
               <ListItem button component="a" href="/usuarios/" key={"Usuarios"}>
                 <ListItemIcon>
@@ -280,7 +280,7 @@ class NavContent extends React.Component {
                 <ListItemText primary={"Clientes"} />
               </ListItem>
             </List>
-          )}
+          )*/}
           <List className={classes.salir}>
             <ListItem button key={"Salir"} onClick={this.logout}>
               <ListItemIcon>

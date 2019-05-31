@@ -42,8 +42,7 @@ namespace planning.Controllers
 
                 db.Incidencias.Add(appointment);
                 db.SaveChanges();
-            }
-            if (param.action == "update" || (param.action == "batch" && param.changed != null))
+            }else if (param.action == "update" || (param.action == "batch" && param.changed != null))
             {
                 var value = (param.action == "update") ? param.value : param.changed[0];
                 var filterData = db.Incidencias.Where(c => c.Id == Convert.ToInt32(value.Id));
@@ -61,8 +60,7 @@ namespace planning.Controllers
                 }
 
                 db.SaveChanges();
-            }
-            if (param.action == "remove" || (param.action == "batch" && param.deleted != null))
+            }else if (param.action == "remove" || (param.action == "batch" && param.deleted != null))
             {
                 if (param.action == "remove")
                 {
