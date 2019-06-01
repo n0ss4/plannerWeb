@@ -133,7 +133,6 @@ export class Plan extends React.Component {
       args.data.FechaInicial = args.data.StartTime;
       args.data.Descripcion = args.data.Subject;
       args.data.FechaFinal = args.data.EndTime;
-      console.log(args);
 
       let estado = args.element.querySelector("#estado");
       let dropDownListEstado = new DropDownList({
@@ -277,7 +276,6 @@ export class Plan extends React.Component {
 
   onActionBegin(args) {
     if (args.requestType === "eventChange") {
-      console.log(args);
       if (args.data.EndTimezone === undefined) {
         args.data.Descripcion = args.data.Subject;
         args.data.FechaInicial = args.data.StartTime;
@@ -337,7 +335,6 @@ export class Plan extends React.Component {
               change={this.change.bind(this)}
               eventRendered={this.onEventRendered.bind(this)}
               resourceHeaderTemplate={this.resourceHeaderTemplate.bind(this)}
-              //renderCell={this.onRenderCell.bind(this)}
               group={{ resources: ["Trabajadores"] }}
               readonly={variable}
             >
