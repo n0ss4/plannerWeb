@@ -16,6 +16,8 @@ import {
 import { DataManager, WebApiAdaptor, UrlAdaptor } from "@syncfusion/ej2-data";
 import { DateTimePickerComponent } from "@syncfusion/ej2-react-calendars";
 import AuthService from "../../services/AuthService";
+import { DropDownList } from "@syncfusion/ej2-dropdowns";
+import { DateTimePicker } from "@syncfusion/ej2-calendars";
 import { DropDownListComponent } from "@syncfusion/ej2-react-dropdowns";
 
 /**
@@ -131,25 +133,74 @@ export class Plan extends React.Component {
       args.data.FechaInicial = args.data.StartTime;
       args.data.Descripcion = args.data.Subject;
       args.data.FechaFinal = args.data.EndTime;
-      this.state.trabajador = args.data.IdTrabajador;
-      this.state.client = args.data.IdCliente;
+      console.log(args);
+
+      let estado = args.element.querySelector("#estado");
+      let dropDownListEstado = new DropDownList({
+        dataSource: [
+          {
+            text: "Abierta",
+            value: false
+          },
+          { text: "Cerrada", value: true }
+        ],
+        fields: { text: "text", value: "value" },
+        value: args.data.Estado,
+        floatLabelType: "Always",
+        placeholder: "Estado"
+      });
+      dropDownListEstado.appendTo(estado);
+
+      let trabajador = args.element.querySelector("#IdTrabajador");
+      let dropDownListTrabajador = new DropDownList({
+        dataSource: this.resourceData,
+        fields: { text: "Nombre", value: "Id" },
+        value: args.data.IdTrabajador,
+        floatLabelType: "Always",
+        placeholder: "Trabajador"
+      });
+      dropDownListTrabajador.appendTo(trabajador);
+
+      let clientes = args.element.querySelector("#IdCliente");
+      let dropDownListCliente = new DropDownList({
+        dataSource: this.dataClients,
+        fields: { text: "Nombre", value: "Id" },
+        value: args.data.IdCliente,
+        floatLabelType: "Always",
+        placeholder: "Cliente"
+      });
+      dropDownListCliente.appendTo(clientes);
 
       let fechaInicial = args.element.querySelector("#FechaInicial");
-      fechaInicial.value =
-        args.data.FechaInicial.toLocaleDateString("en-US") +
-        " " +
-        args.data.FechaInicial.toLocaleTimeString("en-US", {
-          hour: "2-digit",
-          minute: "2-digit"
-        });
+      let dateTimePickerInicial = new DateTimePicker({
+        value: args.data.FechaInicial,
+        floatLabelType: "Always",
+        placeholder: "De",
+        value:
+          args.data.FechaInicial.toLocaleDateString("en-US") +
+          " " +
+          args.data.FechaInicial.toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit"
+          })
+      });
+      dateTimePickerInicial.appendTo(fechaInicial);
+
       let fechaFinal = args.element.querySelector("#FechaFinal");
-      fechaFinal.value =
-        args.data.FechaFinal.toLocaleDateString("en-US") +
-        " " +
-        args.data.FechaFinal.toLocaleTimeString("en-US", {
-          hour: "2-digit",
-          minute: "2-digit"
-        });
+      let dateTimePickerFinal = new DateTimePicker({
+        value: args.data.FechaFinal,
+        floatLabelType: "Always",
+        placeholder: "Hasta",
+        value:
+          args.data.FechaFinal.toLocaleDateString("en-US") +
+          " " +
+          args.data.FechaFinal.toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit"
+          })
+      });
+      dateTimePickerFinal.appendTo(fechaFinal);
+
       let descripcion = args.element.querySelector("#Descripcion");
       if (args.data.Descripcion !== undefined) {
         descripcion.value = args.data.Descripcion;
@@ -165,28 +216,25 @@ export class Plan extends React.Component {
       >
         <tbody>
           <tr>
-            <td className="e-textlabel">De</td>
-            <td style={{ colspan: "4" }}>
-              <DateTimePickerComponent
+            <td>
+              <input
+                id="FechaInicial"
                 className="e-field e-input"
                 name="FechaInicial"
-                id="FechaInicial"
               />
             </td>
           </tr>
           <tr>
-            <td className="e-textlabel">Hasta</td>
-            <td style={{ colspan: "4" }}>
-              <DateTimePickerComponent
+            <td>
+              <input
+                id="FechaFinal"
                 className="e-field e-input"
                 name="FechaFinal"
-                id="FechaFinal"
               />
             </td>
           </tr>
           <tr>
-            <td className="e-textlabel">Descripción</td>
-            <td style={{ colspan: "4" }}>
+            <td>
               <textarea
                 id="Descripcion"
                 className="e-field e-input"
@@ -202,48 +250,26 @@ export class Plan extends React.Component {
             </td>
           </tr>
           <tr>
-            <td className="e-textlabel">Trabajador</td>
-            <td style={{ colspan: 4 }}>
-              <DropDownListComponent
+            <td>
+              <input
                 id="IdTrabajador"
-                className="e-field e-IdTrabajador e-input"
+                className="e-field e-input"
                 name="IdTrabajador"
-                placeholder="Selecciona un trabajador"
-                dataSource={this.resourceData}
-                ref={dropdownlist => {
-                  this.listObj = dropdownlist;
-                }}
-                fields={this.fields}
-                value={this.state.trabajador}
               />
             </td>
           </tr>
           <tr>
-            <td className="e-textlabel">Cliente</td>
-            <td style={{ colspan: 4 }}>
-              <DropDownListComponent
+            <td>
+              <input
                 id="IdCliente"
                 className="e-field e-input"
                 name="IdCliente"
-                placeholder="Selecciona un cliente"
-                dataSource={this.dataClients}
-                ref={dropdownlist => {
-                  this.listObj = dropdownlist;
-                }}
-                fields={this.fields}
-                value={this.state.client}
               />
             </td>
           </tr>
-          {/*<tr>
-            <td className="e-textlabel">Estado</td>
-            <td style={{ colspan: 4 }}>
-              <DropDownListComponent
-                id="estado"
-                placeholder="Selecciona un estado"
-              />
-            </td>
-          </tr>*/}
+          <tr>
+            <input id="estado" className="e-field e-input" name="estado" />
+          </tr>
         </tbody>
       </table>
     );
@@ -252,18 +278,11 @@ export class Plan extends React.Component {
   onActionBegin(args) {
     if (args.requestType === "eventChange") {
       console.log(args);
-      args.data.Descripcion = args.data.Subject;
-      if(args.data.EndTimezone === undefined){
+      if (args.data.EndTimezone === undefined) {
+        args.data.Descripcion = args.data.Subject;
         args.data.FechaInicial = args.data.StartTime;
         args.data.FechaFinal = args.data.EndTime;
       }
-      /*if (args.data.StartTime !== undefined) {
-        args.data.FechaInicial = args.data.StartTime;
-        args.data.FechaFinal = args.data.EndTime;
-      }*/
-      /*
-      
-      */
     }
   }
 
