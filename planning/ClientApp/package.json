@@ -39,7 +39,7 @@
     "@syncfusion/ej2-react-splitbuttons": "17.1.47",
     "@syncfusion/ej2-react-treegrid": "17.1.48",
     "@syncfusion/ej2-react-treemap": "17.1.48",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "bootstrap": "^4.3.1",
     "cldr-data": "^35.1.0",
     "date-fns": "^2.0.0-alpha.27",
